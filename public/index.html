@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FriendScape - Roblox Friends Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-left">
+            <button class="menu-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-mini">
+                <i class="fas fa-project-diagram"></i>
+                <span>FriendScape</span>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" id="userInput" placeholder="Enter username or User ID">
+                <button class="search-btn" onclick="loadUserNetwork()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <div id="auth-section">
+                <button class="auth-btn" onclick="window.location.href='/auth/login'">
+                    <i class="fas fa-sign-in-alt"></i> Login with Roblox
+                </button>
+            </div>
+            <button class="theme-btn" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <!-- Statistics Section -->
+        <div class="menu-section">
+            <h3><i class="fas fa-chart-bar"></i> Network Statistics</h3>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalNodes">0</div>
+                    <div class="stat-label">Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalConnections">0</div>
+                    <div class="stat-label">Connections</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="networkDepth">0</div>
+                    <div class="stat-label">Max Depth</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="loadTime">0s</div>
+                    <div class="stat-label">Load Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="menu-section">
+            <h3><i class="fas fa-cog"></i> Controls</h3>
+            <div class="control-group">
+                <button class="control-btn active" id="physicsBtn" onclick="togglePhysics()">
+                    <i class="fas fa-play"></i> Physics: ON
+                </button>
+                <button class="control-btn" onclick="centerView()">
+                    <i class="fas fa-crosshairs"></i> Center View
+                </button>
+                <button class="control-btn" onclick="clearNetwork()">
+                    <i class="fas fa-trash"></i> Clear Network
+                </button>
+                <button class="control-btn" onclick="exportNetwork()">
+                    <i class="fas fa-download"></i> Export as Image
+                </button>
+            </div>
+        </div>
+
+        <!-- Path Finder Section -->
+        <div class="menu-section">
+            <h3><i class="fas fa-route"></i> Six Degrees of Separation</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">
+                Find the shortest connection path between two users
+            </p>
+            <div class="path-finder">
+                <input type="text" class="path-input" id="startUser" placeholder="Start username">
+                <input type="text" class="path-input" id="endUser" placeholder="Target username">
+                <button class="control-btn" onclick="findShortestPath()">
+                    <i class="fas fa-search"></i> Find Path
+                </button>
+                <div id="pathResult" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Theme Section -->
+        <div class="menu-section">
+            <h3><i class="fas fa-palette"></i> Appearance</h3>
+            <div class="theme-selector">
+                <button class="theme-option active" onclick="setTheme('light')">
+                    <i class="fas fa-sun"></i> Light
+                </button>
+                <button class="theme-option" onclick="setTheme('dark')">
+                    <i class="fas fa-moon"></i> Dark
+                </button>
+            </div>
+        </div>
+        <span id="">Powered by <a href="https://www.qwsrlabs.space/" class="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">QuasarLabs</a></span>
+    </div>
+
+    <!-- Network Canvas -->
+    <div class="network-container">
+        <div class="loading-screen glass-effect bg-opacity-80 backdrop-blur-sm opacity-0 " id="loadingScreen">
+                <div class="loading-content">
+                    <div class="loading-logo">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>FriendScape</span>
+                    </div>
+                    
+                    <div class="cloudflare-check" id="cloudflareCheck" style="display: none;">
+                        <i class="fas fa-shield-alt"></i>
+                        <span id="cloudflareText">Human or Iron Watermelon?</span>
+                    </div>
+                    
+                    <!-- Cloudflare Turnstile Widget -->
+                    <div id="cf-turnstile" style="display: none; margin: 1rem 0;" data-sitekey="0x4AAAAAAB1Cp1P3EaDkTG_U" data-theme="dark" data-size="normal" data-callback="onSuccess"></div>
+                    
+                    <div class="error-message" id="errorMessage" style="display: none;"></div>
+                </div>
+            </div>
+        <canvas id="network-canvas"></canvas>
+        <div class="loading glass-effect bg-opacity-80 backdrop-blur-sm opacity-0" id="loading" style="display: none;">
+            <i class="fas fa-spinner"></i>
+        </div>
+        <div class="node-tooltip" id="tooltip" style="display: none;"></div>
+    </div>
+
+    <!-- Mini Controls -->
+    <div class="mini-controls">
+        <div class="mini-control" onclick="zoomIn()" title="Zoom In">
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="mini-control" onclick="zoomOut()" title="Zoom Out">
+            <i class="fas fa-minus"></i>
+        </div>
+        <div class="mini-control" onclick="resetZoom()" title="Reset Zoom">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+    <script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+    ></script>
+    <script src="script.js"></script>
+    <script>
+    const memePhrases = [
+        "Human or Iron Watermelon?",
+        "Human or Potato?",
+        "Human or Toaster?",
+        "Real or Banana?",
+        "Is it photoshop or real photo?",
+        "Person or Fridge?",
+        "Human or Sentient Cactus?",
+        "Real or Rubber Duck?",
+        "Human or Smart Microwave?",
+        "Person or Talking Lamp?",
+        "Human or AI-Powered Blender?",
+        "Real or Glowing Rock?",
+        "Human or Sentient Houseplant?",
+        "Person or Quantum Calculator?",
+        "Human or Self-Aware Pillow?",
+        "Real or Magical Teapot?",
+        "Human or Slightly Melted Wax Figure?",
+        "Real or Cake?",
+        "Person or Loaf of Bread?",
+        "Human or AI-Generated Image?",
+        "Real or Very Detailed Plush Toy?",
+        "Human or Garbage Bin with Googly Eyes?",
+        "Person or Suspiciously Shaped Cloud?",
+        "Human or Alien in a Bad Costume?",
+        "Real or VR Simulation?",
+        "Human or Coffee Machine with Anxiety?",
+        "Person or Glitch in the Matrix?",
+        "Real or Hyperrealistic Drawing?",
+        "Human or Roomba Wearing a Hat?",
+        "Person or Sentient Traffic Cone?",
+        "Human or Dyson Sphere?",
+        "Real or Dream?",
+        "Human or NPC?",
+        "Person or Forklift Certified?",
+        "Human or Government Drone?",
+        "Real or Deepfake?",
+        "Human or Mop with a Wig?",
+        "Person or Cryptid Sighting?",
+        "Human or 5G Tower in a Trenchcoat?"
+    ];
+
+    function getRandomPhrase() {
+        const randomIndex = Math.floor(Math.random() * memePhrases.length);
+        return memePhrases[randomIndex];
+    }
+
+
+    function updateCloudflareText() {
+        const cloudflareText = document.getElementById('cloudflareText');
+        if (cloudflareText) {
+            cloudflareText.textContent = getRandomPhrase();
+        }
+    }
+
+
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                const cloudflareCheck = document.getElementById('cloudflareCheck');
+                if (cloudflareCheck && cloudflareCheck.style.display !== 'none') {
+                    updateCloudflareText();
+                }
+            }
+        });
+    });
+
+    observer.observe(document.getElementById('cloudflareCheck'), {
+        attributes: true,
+        attributeFilter: ['style']
+    });
+    </script>
+</body>
+</html>
