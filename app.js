@@ -21,7 +21,6 @@ const ROBLOX_USERS_API = 'https://users.roproxy.com/v1';
 const ROBLOX_THUMBNAILS_API = 'https://thumbnails.roproxy.com/v1';
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 // Configuration
 const ROBLOX_CLIENT_ID = process.env.ROBLOX_CLIENT_ID;
 const ROBLOX_CLIENT_SECRET = process.env.ROBLOX_CLIENT_SECRET;
@@ -85,7 +84,7 @@ app.use(helmet({
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(JWT_SECRET));
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' ? false : true,
@@ -1168,7 +1167,7 @@ async function getUserFriendIds(userId) {
 async function getRobloxUserFriendIds(robloxId) {
     try {
         const response = await axios.get(
-            `https://roproxy-production-27a6.up.railway.app/friends/v1/users/${robloxId}/friends`, // using my own proxy cuz roproxy is lazy to do that route
+            `https://friends.roblox.com/v1/users/${robloxId}/friends`, // using my own proxy cuz roproxy is lazy to do that route
             { timeout: 10000 }
         );
         
@@ -1708,27 +1707,6 @@ process.on('SIGINT', async () => {
 });
 
 
-async function startServer() {
-    try {
-        console.log('🚀 Starting FriendScape server... (YEES)');
-        
-        await initializeDatabase();
-        await initializeOAuthClient();
-        await initializeNoblox();
-        initializeMockData();
-        
-        app.listen(PORT, () => {
-            console.log(`✅ FriendScape server running on http://localhost:${PORT}`);
-            console.log(`🔐 OAuth configured: ${!!oauthClient}`);
-            console.log(`🗄️  Database available: ${pool ? 'Yes' : 'No'}`);
-            console.log(`🎭 Mock data: ${MOCK_USERS.size} users, ${MOCK_FRIENDSHIPS.size} networks`);
-            console.log(`📊 Health check: http://localhost:${PORT}/health`);
-            console.log(`👤 Login: http://localhost:${PORT}/auth/login`);
-        });
-    } catch (error) {
-        console.error('❌ Failed to start server:', error);
-        process.exit(1);
-    }
-}
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
