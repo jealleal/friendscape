@@ -223,7 +223,7 @@ async function initializeOAuthClient() {
         oauthClient = new issuer.Client({
             client_id: ROBLOX_CLIENT_ID,
             client_secret: ROBLOX_CLIENT_SECRET,
-            redirect_uris: [`${process.env.BASE_URL || `http://localhost:${PORT}`}/auth/callback`],
+            redirect_uris: 'https://friendscape-1.onrender.com/auth/callback',
             response_types: ['code'],
             scope: 'openid profile',
             id_token_signed_response_alg: 'ES256'
@@ -397,7 +397,7 @@ app.get('/auth/callback', async (req, res) => {
         }
         
         const tokenSet = await oauthClient.callback(
-            `${process.env.BASE_URL || `http://localhost:${PORT}`}/auth/callback`,
+            'https://friendscape-1.onrender.com/auth/callback',
             params,
             {
                 state: req.session.oauth_state,
@@ -1710,3 +1710,4 @@ process.on('SIGINT', async () => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
