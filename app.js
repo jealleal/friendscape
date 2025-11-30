@@ -221,8 +221,8 @@ async function initializeOAuthClient() {
         const issuer = await Issuer.discover('https://apis.roproxy.com/oauth/.well-known/openid-configuration');
         
         oauthClient = new issuer.Client({
-            client_id: ROBLOX_CLIENT_ID,
-            client_secret: ROBLOX_CLIENT_SECRET,
+            client_id: 1028731310506855033,
+            client_secret: RBX-G7gTEAiy6Eyt4F2azGyq2LUEAsK26klju6gDLoLSQ0vmmuRKMXg6N_3dnHjdCUtT,
             redirect_uris: 'https://friendscape-1.onrender.com/auth/callback',
             response_types: ['code'],
             scope: 'openid profile',
@@ -1710,4 +1710,5 @@ process.on('SIGINT', async () => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
