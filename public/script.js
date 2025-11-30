@@ -76,7 +76,7 @@ function toggleCloudflareCheck(show) {
     }
 }
 
-const CLOUDFLARE_SITE_KEY = '0x4AAAAAAB1Cp1P3EaDkTG_U'; // key here
+const CLOUDFLARE_SITE_KEY = '0x4AAAAAACDySYx4u0BwQpoP'; // key here
 const CLOUDFLARE_VERIFY_URL = '/api/verify-cloudflare';
 let turnstileWidgetId = null;
 let isVerifying = false;
@@ -1150,3 +1150,4 @@ document.addEventListener('DOMContentLoaded', init);
 
 
 window.addEventListener('popstate', loadFromUrl);
+
